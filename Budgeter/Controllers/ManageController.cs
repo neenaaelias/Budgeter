@@ -15,6 +15,8 @@ namespace Budgeter.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
+
 
         public ManageController()
         {
@@ -32,9 +34,9 @@ namespace Budgeter.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -49,7 +51,54 @@ namespace Budgeter.Controllers
                 _userManager = value;
             }
         }
+        // GET: /Manage/ChangeName
+        public ActionResult ChangeName()
+        {
+            string userId = User.Identity.GetUserId();
+            ApplicationUser userOriginal = db.Users.Find(userId);
 
+            ChangeNameViewModel model = new ChangeNameViewModel();
+
+            model.FName = userOriginal.FirstName;
+            model.LName = userOriginal.LastName;
+            model.DName = userOriginal.DisplayName;
+
+            return View(model);
+        }
+
+        //
+        // POST: /Manage/ChangeName
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangeName(ChangeNameViewModel model)
+
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ChangePassword");
+            }
+            string userId = User.Identity.GetUserId();
+            ApplicationUser userOriginal = db.Users.Find(userId);
+
+            if ((model.FName != null && model.FName != ""))
+            {
+                userOriginal.FirstName = model.FName;
+            }
+
+            if ((model.LName != null) && (model.LName != ""))
+            {
+                userOriginal.LastName = model.LName;
+            }
+
+            if ((model.DName != null) && (model.DName != ""))
+            {
+                userOriginal.DisplayName = model.DName;
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index", new { Message = ManageMessageId.ChangeNameSuccess });
+        }
         //
         // GET: /Manage/Index
         public async Task<ActionResult> Index(ManageMessageId? message)
@@ -59,6 +108,9 @@ namespace Budgeter.Controllers
                 : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
                 : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
                 : message == ManageMessageId.Error ? "An error has occurred."
+                : message == ManageMessageId.ChangeNameSuccess ? "Your name changed."//added to change name
+
+
                 : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
@@ -381,7 +433,8 @@ namespace Budgeter.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
-            Error
+            Error,
+            ChangeNameSuccess
         }
 
 #endregion

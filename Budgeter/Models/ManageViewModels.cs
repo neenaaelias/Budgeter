@@ -38,7 +38,18 @@ namespace Budgeter.Models
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+    //added to change name 
+    public class ChangeNameViewModel
+    {
+        [Display(Name = "First Name")]
+        public string FName { get; set; }
 
+        [Display(Name = "Last Name")]
+        public string LName { get; set; }
+
+        [Display(Name = "User Name")]
+        public string DName { get; set; }
+    }
     public class ChangePasswordViewModel
     {
         [Required]
