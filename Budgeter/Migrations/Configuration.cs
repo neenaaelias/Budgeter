@@ -82,13 +82,12 @@ namespace Budgeter.Migrations
                 userManager.Create(new ApplicationUser
                 {
                     FirstName = "Guest",
-                    LastName = "Userguest",
+                    LastName = "User",
                     PhoneNumber = "(###) ###-####",
                     UserName = "guest@budgeter.com",
                     Email = "guest@budgeter.com",
                 }, "Password-1");
             }
-
             var userId_Neena = userManager.FindByEmail("neenaaelias@gmail.com").Id;
             userManager.AddToRole(userId_Neena, "HouseHoldAdmin");
 
@@ -96,10 +95,10 @@ namespace Budgeter.Migrations
             userManager.AddToRole(userId_Tom, "Admin");
 
             var userId_User = userManager.FindByEmail("user@budgeter.com").Id;
-            userManager.AddToRole(userId_User, "User");
+            userManager.AddToRole(userId_User, "user");
 
             var userId_Guest = userManager.FindByEmail("guest@budgeter.com").Id;
-            userManager.AddToRole(userId_Guest, "Guest");
+            userManager.AddToRole(userId_Guest, "guest");
 
 
             //  This method will be called after migrating to the latest version.

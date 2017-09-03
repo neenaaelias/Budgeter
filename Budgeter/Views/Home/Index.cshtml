@@ -1,8 +1,141 @@
-﻿@{
+﻿@model IEnumerable<Budgeter.Models.HouseHold>
+@using Microsoft.AspNet.Identity
+
+
+
+@{
     ViewBag.Title = "Home Page";
+    var userId = User.Identity.GetUserId();
+
 }
 
-<h1 class= "text-center">My house</h1>
-<p  class = "text-center">
-@Html.ActionLink("new house","Create", "", new {@class ="btn btn-lg btn-default"})
-</p>
+@*@if (Request.IsAuthenticated)*@
+{
+
+<h3 class="text-left">My house</h3>
+<p class="text-left"><a href="@Url.Action("Create", "HouseHolds")" class="btn btn-success">Create New </a></p>
+
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </th>*@
+            <th>Assigned Users</th>
+            <th>Actions</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.IsDeleted)
+                </td>*@
+                <td>
+                    @foreach (var user in item.Users)
+                    {
+                        @user.FirstName
+                        <br />
+                    }
+
+
+                </td>
+                <td>
+                    <a href="@Url.Action("Create", "Invites", new { id = item.Id })" title="Invite Users" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-envelope"></i></a>
+                    <a href="@Url.Action("HouseAssign", "HouseHolds", new { id = item.Id })" title="Assign" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-user"></i></a>
+                    <a href="@Url.Action("Edit", "HouseHolds", new { id = item.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a><br />
+                    <a href="@Url.Action("Details", "HouseHolds", new { id = item.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                    <a href="@Url.Action("Delete", "HouseHolds", new { id = item.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
+
+                    @foreach (var user in item.Users)
+                    {
+                        if (userId == user.Id)
+                        {
+                            @*@Html.ActionLink("Leave", "LeaveHouseHold", new { id = item.Id })*@
+                            <a href="@Url.Action("LeaveHouseHold", "HouseHolds", new { id = item.Id })" title="Leave" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-circle"></i></a><br />
+
+                        }
+                    }
+                    <a href="@Url.Action("Create", "BankAccounts", new { id = item.Id })" title="Create New Account" style="width: 26px" class="btn btn-xs btn-success"><i class="fa fa-money"></i> </a><br />
+
+                </td>
+</tr>
+        }
+  </table>
+
+
+ <!--displaying bank accounts-->
+
+<h3> Bank Account details</h3>
+        <table class="table">
+            <tr>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.household.Name)*@
+                    House Hold Name
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @*@Html.DisplayNameFor(model => model.Balance)*@
+                    Balance
+            </th>
+            <th>Actions</th>
+                <th> Account status</th>
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            foreach (var account in item.BankAccount)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => account.household.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => account.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => account.Balance)
+                </td>
+                <td>
+                    @*<a href="/Transactions/Create/1" title="Add Transactions" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa fa-dollar"></i></a>*@
+                    <a href="@Url.Action("Create", "Transactions", new { id = account.Id })" title="Add Transaction" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa  fa-dollar"></i></a>
+                    <a href="@Url.Action("Edit", "BankAccounts", new { id = account.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa  fa-edit"></i></a>
+                    <a href="@Url.Action("Details", "BankAccounts", new { id = account.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-eye"></i></a>
+                    <a href="@Url.Action("Delete", "BankAccounts", new { id = account.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa  fa-trash"></i></a>
+
+
+                    @*<a href="/BankAccounts/Edit/1" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                    <a href="/BankAccounts/Details/1" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                    <a href="/BankAccounts/Delete/1" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>*@
+                </td>
+                <td>
+
+                        @if (account.Balance <= 0)
+                        {
+                            <em style="color:red"> No Enough Money</em>
+                        }
+                        else
+                        {
+                            <em style ="color:green" > Enough Money</em >
+                            }
+
+
+
+
+                </td>
+            </tr>
+            }
+        }
+
+    </table>
+
+    }

@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
 namespace Budgeter.Models
 {
-    public class BankAccounts
+    public class BankAccount
     {
-        public BankAccounts()
+        public BankAccount()
         {
             this.Transactions = new HashSet<Transaction>();
         }
-
         public int Id { get; set; }
         public int HouseHoldId { get; set; }
         public string Name { get; set; }
-        public double Balance { get; }
+        [DisplayFormat(DataFormatString ="{0:c}", ApplyFormatInEditMode = false)]
+        public double Balance { get; set; }
 
-        public virtual HouseHold HouseHold { get; set; }
+        public virtual HouseHold household { get; set; }
         public virtual ICollection<Transaction> Transactions { get; set; }
-
     }
 }

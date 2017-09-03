@@ -6,8 +6,9 @@ using System.Web;
 namespace Budgeter.Models
 {
     public class Budget
+
     {
-        public Budget()
+        public Budget()//construtor should have classs name
         {
             this.Items = new HashSet<Item>();
         }

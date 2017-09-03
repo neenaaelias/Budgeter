@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Budgeter.Models;
+using Microsoft.AspNet.Identity;
+using Budgeter.Models.Helpers;
 
 namespace Budgeter.Controllers
 {
@@ -36,8 +38,15 @@ namespace Budgeter.Controllers
         }
 
         // GET: HouseHolds/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
+            var household = new HouseHold();
+
+            string userId = User.Identity.GetUserId();
+            household.CreatorId = userId;
+
+            ViewBag.Id = id;
+            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName");
             return View();
         }
 
@@ -46,16 +55,65 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,IsDeleted")] HouseHold houseHold)
+        public ActionResult Create([Bind(Include = "Id,Name,IsDeleted,CreatorId")] HouseHold household)
         {
             if (ModelState.IsValid)
             {
-                db.HouseHolds.Add(houseHold);
+                household.CreatorId = User.Identity.GetUserId();
+                db.HouseHolds.Add(household);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+           // ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", household.CreatorId);
+            return View(household);
+        }
+        // GET: HouseHolds/Leave household/5
+        public ActionResult leavehousehold(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            HouseHold houseHold = db.HouseHolds.Find(id);
+            if (houseHold == null)
+            {
+                return HttpNotFound();
+            }
             return View(houseHold);
+        }
+
+        //POST: HouseHolds/Leave household/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult leavehousehold(int id)
+        {
+            HouseAssignHelper helper = new HouseAssignHelper(db);
+            string userId = User.Identity.GetUserId();
+            //helper.RemoveHouseFromUser(household.Id, user);
+
+            helper.RemoveHouseFromUser(id, userId);
+            db.SaveChanges();
+            return RedirectToAction("Index","Home");
+        }
+
+        // POST: HouseHolds/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            HouseHold houseHold = db.HouseHolds.Find(id);
+            db.HouseHolds.Remove(houseHold);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
         // GET: HouseHolds/Edit/5
@@ -103,25 +161,64 @@ namespace Budgeter.Controllers
             }
             return View(houseHold);
         }
-
-        // POST: HouseHolds/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        //GET: Assign User to Houses
+        //[Authorize(Roles = "Admin, HouseholdAdmin")]
+        public ActionResult HouseAssign(int id)
         {
-            HouseHold houseHold = db.HouseHolds.Find(id);
-            db.HouseHolds.Remove(houseHold);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            var household = db.HouseHolds.Find(id);
+            HouseAssignHelper helper = new HouseAssignHelper(db);
+            var model = new HouseAssignUserViewModel();
+
+            model.HouseHold = household;
+
+            model.SelectedUsers = helper.ListAssignedUsers(id).Select(u => u.Id).ToArray();
+            model.Users = new MultiSelectList(db.Users.Where(u => (u.FirstName != "N/A" && u.FirstName != "(Remove Assigned User)")).OrderBy(u => u.FirstName), "Id", "FirstName", model.SelectedUsers);
+
+
+            return View(model);
         }
 
-        protected override void Dispose(bool disposing)
+        //POST: Assign Users to House
+        [HttpPost]
+        //[Authorize(Roles = "HouseholdAdmin, Admin")]
+        public ActionResult HouseAssign(HouseAssignUserViewModel model)
         {
-            if (disposing)
+            var household = db.HouseHolds.Find(model.HouseHold.Id);
+            HouseAssignHelper helper = new HouseAssignHelper(db);
+
+            foreach (var user in db.Users.Select(r => r.Id).ToList())
             {
-                db.Dispose();
+                helper.RemoveHouseFromUser(household.Id, user);
             }
-            base.Dispose(disposing);
+            if (model.SelectedUsers != null)
+            {
+                foreach (var user in model.SelectedUsers)
+                {
+                    helper.AddHouseToUser(household.Id, user);
+                }
+            }
+            return RedirectToAction("Index", "Home");
+
         }
+
+        //// POST: HouseHolds/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult DeleteConfirm(int id)
+        //{
+        //    HouseHold houseHold = db.HouseHolds.Find(id);
+        //    db.HouseHolds.Remove(houseHold);
+        //    db.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }

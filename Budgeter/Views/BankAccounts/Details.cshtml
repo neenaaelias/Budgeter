@@ -19,16 +19,25 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @*@Html.DisplayNameFor(model => model.Name)*@
+            Bank
+
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Balance)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Balance)
         </dd>
 
     </dl>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index","Home")
 </p>

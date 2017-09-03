@@ -1,0 +1,34 @@
+﻿@model Budgeter.Models.Helpers.HouseAssignUserViewModel
+@{
+    ViewBag.Title = "house Assignment";
+}
+
+@using (Html.BeginForm("HouseAssign", "HouseHolds", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div>
+        <strong>House Name</strong><br />
+        @Model.HouseHold.Name
+        <br />
+        @Html.HiddenFor(model => model.HouseHold.Id, new { })
+        <br />
+        @Html.ListBox("SelectedUsers", Model.Users, htmlAttributes: new { id = "mySelect" })
+        <br />
+        <br />
+        <button class="btn btn-success" type="submit">Assign Users</button>
+
+
+
+        <a class="btn btn-danger" href="@Url.Action("Index", "Home")">Back to List</a>
+    </div>
+}
+@*@Html.ActionLink("Back to List", "Index", "Home")*@
+
+
+
+
+
+
+
+
+
+

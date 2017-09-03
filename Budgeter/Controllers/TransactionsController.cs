@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Budgeter.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Budgeter.Controllers
 {
@@ -37,9 +38,10 @@ namespace Budgeter.Controllers
         }
 
         // GET: Transactions/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name");
+            ViewBag.BankAccountId = id;
+            //ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name");
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name");
             ViewBag.TypeId = new SelectList(db.Types, "Id", "Name");
             return View();
@@ -50,16 +52,35 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Amount,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction)
+        public ActionResult Create([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Amount,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction,int BankAccountId)
         {
             if (ModelState.IsValid)
             {
-                db.Transactions.Add(transaction);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                transaction.BankAccountId = BankAccountId;
+                var bankaccount = db.BankAccounts.Find(BankAccountId);
+                if (bankaccount != null)
+                {
+                    transaction.BankAccount = bankaccount;
+                    transaction.EnteredById = User.Identity.GetUserId();
+                    if (transaction.TypeId == 1)
+                    {
+                        transaction.BankAccount.Balance += transaction.Amount;
+                    }
+                    else if (transaction.TypeId == 2)
+                    {
+                        transaction.BankAccount.Balance -= transaction.Amount;
+                    }
+
+
+
+                        db.Transactions.Add(transaction);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+
             }
 
-            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);
+            //ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", transaction.CategoryId);
             ViewBag.TypeId = new SelectList(db.Types, "Id", "Name", transaction.TypeId);
             return View(transaction);

@@ -15,10 +15,10 @@ namespace Budgeter.Models
         public double Amount { get; set; }
         public int TypeId { get; set; }
         public int CategoryId { get; set; }
-        public int EnteredById { get; set; }
+        public string EnteredById { get; set; }
         public bool IsDeleted {get;set;}
 
-        public virtual BankAccounts BankAccount { get; set; }
+        public virtual BankAccount BankAccount { get; set; }
         public virtual Category Category { get; set; }
         public virtual Budgeter.Models.Type Type { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }

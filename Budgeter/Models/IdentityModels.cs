@@ -3,9 +3,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Budgeter.Models;
-using System.Collections;
-using System.Web.Util;
 using System.Collections.Generic;
 
 namespace Budgeter.Models
@@ -16,31 +13,19 @@ namespace Budgeter.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DisplayName { get; set; }
-
         public ApplicationUser()
+
         {
-            this.HouseHolds    = new HashSet<Budgeter.Models.HouseHold>();
-            this.BankAccounts = new HashSet<Budgeter.Models.BankAccounts>();
-            this.Transactions = new HashSet<Transaction>();
+         this.HouseHolds =new HashSet<Budgeter.Models.HouseHold>();
+         this.BankAccounts = new HashSet<Budgeter.Models.BankAccount>();
+         this.Transactions = new HashSet<Budgeter.Models.Transaction>();
 
         }
 
 
     public virtual ICollection<HouseHold> HouseHolds { get; set; }
-    public virtual ICollection<BankAccounts> BankAccounts { get; set; }
-    public virtual ICollection<Transaction> Transactions { get; set; }
-
-
-
-
-
-
-
-
-
-
-
-
+    public virtual ICollection<BankAccount> BankAccounts { get; set; }
+    public virtual ICollection<Transaction>Transactions { get; set; }
 
     public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -67,7 +52,7 @@ namespace Budgeter.Models
 
         public System.Data.Entity.DbSet<Budgeter.Models.Transaction> Transactions { get; set; }
 
-        public System.Data.Entity.DbSet<Budgeter.Models.BankAccounts> BankAccounts { get; set; }
+        public System.Data.Entity.DbSet<Budgeter.Models.BankAccount> BankAccounts { get; set; }
 
         public System.Data.Entity.DbSet<Budgeter.Models.Category> Categories { get; set; }
 
@@ -76,5 +61,7 @@ namespace Budgeter.Models
         public System.Data.Entity.DbSet<Budgeter.Models.Item> Items { get; set; }
 
         public System.Data.Entity.DbSet<Budgeter.Models.Budget> Budgets { get; set; }
+
+        public System.Data.Entity.DbSet<Budgeter.Models.Invite> Invites { get; set; }
     }
 }

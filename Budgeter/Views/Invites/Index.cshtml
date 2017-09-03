@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Budgeter.Models.BankAccount>
+﻿@model IEnumerable<Budgeter.Models.Invite>
 
 @{
     ViewBag.Title = "Index";
@@ -8,33 +8,31 @@
 
 <p>
     @Html.ActionLink("Create New", "Create")
-    <p class ="text-danger">
-
-    @ViewBag.OverDraftError
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.household.Name)
+            @Html.DisplayNameFor(model => model.Email)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.HouseHoldId)
         </th>
-        <th>@Html.DisplayNameFor(model => model.Balance)
-</th>
-        <th>Actions</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Secret)
+        </th>
+        <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.household.Name)
+            @Html.DisplayFor(modelItem => item.Email)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @Html.DisplayFor(modelItem => item.HouseHoldId)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Balance)
+            @Html.DisplayFor(modelItem => item.Secret)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
