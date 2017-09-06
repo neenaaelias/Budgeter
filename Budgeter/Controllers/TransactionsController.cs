@@ -14,6 +14,7 @@ namespace Budgeter.Controllers
     public class TransactionsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        double tempAmount = 0;
 
         // GET: Transactions
         public ActionResult Index()
@@ -52,7 +53,7 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Amount,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction,int BankAccountId)
+        public ActionResult Create([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Balance,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction,int BankAccountId)
         {
             if (ModelState.IsValid)
             {
@@ -64,15 +65,12 @@ namespace Budgeter.Controllers
                     transaction.EnteredById = User.Identity.GetUserId();
                     if (transaction.TypeId == 1)
                     {
-                        transaction.BankAccount.Balance += transaction.Amount;
+                        transaction.BankAccount.Balance += transaction.Balance;
                     }
                     else if (transaction.TypeId == 2)
                     {
-                        transaction.BankAccount.Balance -= transaction.Amount;
+                        transaction.BankAccount.Balance -= transaction.Balance;
                     }
-
-
-
                         db.Transactions.Add(transaction);
                         db.SaveChanges();
                         return RedirectToAction("Index");
@@ -94,6 +92,8 @@ namespace Budgeter.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Transaction transaction = db.Transactions.Find(id);
+            transaction.BankAccount = db.BankAccounts.Find(transaction.BankAccountId);
+            ViewBag.TempBalance = transaction.Balance;
             if (transaction == null)
             {
                 return HttpNotFound();
@@ -109,13 +109,37 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Amount,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction)
+        public ActionResult Edit([Bind(Include = "Id,BankAccountId,Payee,Description,Date,Balance,TypeId,CategoryId,EnteredById,IsDeleted")] Transaction transaction,double tempAmount)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(transaction).State = EntityState.Modified;
+                transaction.BankAccount = db.BankAccounts.Find(transaction.BankAccountId);
+
+                if (tempAmount != transaction.Balance)
+                {
+                    if (transaction.TypeId == 1)
+                    {
+                        transaction.BankAccount.Balance = transaction.BankAccount.Balance - tempAmount;//reverse the amount
+                        transaction.BankAccount.Balance = transaction.BankAccount.Balance + transaction.Balance;//addd the edit
+                    }
+                    else//expense
+                    {
+                        if (transaction.BankAccount.Balance >= transaction.Balance)//make sure edit amount doesnt go over account balance
+                        {
+                            transaction.BankAccount.Balance = transaction.BankAccount.Balance + tempAmount;
+                            transaction.BankAccount.Balance = transaction.BankAccount.Balance - transaction.Balance;
+
+                        }
+                        else//return user to same page if they go over balance
+                        {
+                            return RedirectToAction("Edit", "Transactions", new { id = transaction.Id });
+
+                        }
+                    }
+                }
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details","HouseHolds",new { id = transaction.BankAccount.HouseHoldId });
             }
             ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", transaction.CategoryId);
