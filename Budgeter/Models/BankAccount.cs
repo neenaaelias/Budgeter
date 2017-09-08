@@ -15,7 +15,7 @@ namespace Budgeter.Models
         public int Id { get; set; }
         public int HouseHoldId { get; set; }
         public string Name { get; set; }
-        [DisplayFormat(DataFormatString ="{0:c}", ApplyFormatInEditMode = false)]
+        [DisplayFormat(DataFormatString ="{0:C}", ApplyFormatInEditMode = false)]
         public double Balance { get; set; }
 
         public virtual HouseHold household { get; set; }

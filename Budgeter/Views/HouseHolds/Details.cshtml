@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "Details";
+    double income = 0;
+    double expense = 0;
 }
 
 <h2>Details</h2>
@@ -18,6 +20,7 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
 
+
         <dt>
             @Html.DisplayNameFor(model => model.IsDeleted)
         </dt>
@@ -29,7 +32,237 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index", "Home")
-    </div>
+    @*@Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |*@
+    <a class="btn btn-danger" href="@Url.Action("Index", "Home")">Back to List</a>
 </p>
+
+<!--Here we will be adding the expense & income details-->
+@foreach (var item in Model.BankAccount)
+{
+    foreach (var item2 in item.Transactions)
+    {
+        if (item2.TypeId == 1)
+        {
+            income += item2.Balance;
+        }
+
+    }
+
+}
+<h2>Income</h2>
+<h4> @income.ToString("C")</h4>
+
+@*<p>
+        @Html.ActionLink("Create New", "Create", "Transactions", new { id = account.Id })
+        <a href="@Url.Action("Create", "Transactions", new { id = account.Id })" title="Add Transaction" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa fa-dollar"></i></a>
+    </p>*@
+<br />
+<table class="table">
+    <tr>
+        <th>
+            @*@Html.DisplayNameFor(model => model.BankAccount.Name)*@
+            Bank Name
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Type.Name)
+                Type
+            </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.Payee)*@
+            Payee
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Description)
+                Description
+            </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.Created)*@
+            Date Originated
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.Amount)*@
+            Amount
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.CaterogyId)
+                Category
+            </th>*@
+        @*<th>
+                @Html.DisplayNameFor(model => model.EnteredById)
+                Entered By
+            </th>*@
+        @*<th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+                Is Deleted
+            </th>*@
+        @*<th>Actions</th>*@
+    </tr>
+
+    @foreach (var item in Model.BankAccount)
+    {
+        foreach (var trans in item.Transactions)
+        {
+            <!--Here we are filtering transactions per income-->
+            if (trans.TypeId == 1)
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.BankAccount.Name)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.Type.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Payee)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.Description)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Balance)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.CaterogyId)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.EnteredById)
+                            @Html.DisplayFor(modelItem => trans.EnteredBy.FirstName)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.IsDeleted)
+                        </td>*@
+                    <td>
+                        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
+
+                        @*<a href="@Url.Action("Edit", "Transactions", new { id = item.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                            <a href="@Url.Action("Details", "Transactions", new { id = item.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                            <a href="@Url.Action("Delete", "Transactions", new { id = item.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>*@
+                    </td>
+                </tr>
+            }
+        }
+    }
+
+</table>
+
+
+<!--Here we will be adding the expense & income details-->
+@foreach (var item in Model.BankAccount)
+{
+    foreach (var item2 in item.Transactions)
+    {
+        if (item2.TypeId == 2)
+        {
+            expense += item2.Balance;
+        }
+
+    }
+
+}
+<h2>Expense</h2>
+<h4> @expense.ToString("C")</h4>
+@*<p>
+        @Html.ActionLink("Create New", "Create", "Transactions", new { id = account.Id })
+        <a href="@Url.Action("Create", "Transactions", new { id = account.Id })" title="Add Transaction" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa fa-dollar"></i></a>
+    </p>*@
+<br />
+<table class="table">
+    <tr>
+        <th>
+            @*@Html.DisplayNameFor(model => model.BankAccount.Name)*@
+            Bank Name
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Type.Name)
+                Type
+            </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.Payee)*@
+            Payee
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.Description)
+                Description
+            </th>*@
+        <th>
+            @*@Html.DisplayNameFor(model => model.Created)*@
+            Date
+        </th>
+        <th>
+            @*@Html.DisplayNameFor(model => model.Amount)*@
+            Amount
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.CaterogyId)
+                Category
+            </th>*@
+        @*<th>
+                @Html.DisplayNameFor(model => model.EnteredById)
+                Entered By
+            </th>*@
+        @*<th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+                Is Deleted
+            </th>*@
+        @*<th>Actions</th>*@
+    </tr>
+
+    @foreach (var item in Model.BankAccount)
+    {
+        foreach (var trans in item.Transactions)
+        {
+            <!--Here we are filtering transactions per income-->
+            if (trans.TypeId == 2)
+            {
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.BankAccount.Name)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.Type.Name)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Payee)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.Description)
+                        </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => trans.Balance)
+                    </td>
+                    @*<td>
+                            @Html.DisplayFor(modelItem => trans.CaterogyId)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.EnteredById)
+                            @Html.DisplayFor(modelItem => trans.EnteredBy.FirstName)
+                        </td>*@
+                    @*<td>
+                            @Html.DisplayFor(modelItem => item.IsDeleted)
+                        </td>*@
+                    <td>
+                        @*@Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
+
+                        @*<a href="@Url.Action("Edit", "Transactions", new { id = item.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                            <a href="@Url.Action("Details", "Transactions", new { id = item.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                            <a href="@Url.Action("Delete", "Transactions", new { id = item.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>*@
+                    </td>
+                </tr>
+            }
+        }
+    }
+
+</table>
+

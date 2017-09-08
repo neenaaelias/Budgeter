@@ -12,133 +12,211 @@
 @*@if (Request.IsAuthenticated)*@
 {
 
-<h3 class="text-left">My house</h3>
-<p> <a href="@Url.Action("Create", "HouseHolds")" class="btn btn-success">Create New </a>
-<a href="@Url.Action("Create", "Items")" class="btn btn-success">Budget </a></p>
+
+    <h3 class="text-left">My house</h3>
+    <p>
+        <a href="@Url.Action("Create", "HouseHolds")" class="btn btn-success">Create New </a>
+        <a href="@Url.Action("Index", "Items")" class="btn btn-warning">budgets details </a>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-header" style="background-color:#91d57f">
+                            <i class="fa fa-table"></i>
+                            HOUSEHOLDS
+
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" id="dataTable" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+
+                                            <th>Assigned Users</th>
+                                            <th>Actions</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Name)
+                                                </td>
+                                                @*<td>
+                                                        @Html.DisplayFor(modelItem => item.Body)
+                                                    </td>*@
+                                                <td>
+                                                    @foreach (var user in item.Users)
+                                                    {
+                                                        @user.FirstName
+                                                        <br />
+                                                    }
+
+
+                                                </td>
+                                                <td>
+                                                    @*<a href="@Url.Action("Create", "Items")" class="btn btn-success">Budget </a>*@
+
+                                                    @*<a href="@Url.Action("Create", "Items", new { id = item.Id })" title="Budget" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa  fa-bank"></i></a>*@
+
+                                                    <a href="@Url.Action("Create", "Invites", new { id = item.Id })" title="Invite Users" style="width: 26px ; height: 16px" class="btn btn-xs btn-info"><i class="fa  fa-envelope"></i></a>
+                                                    <a href="@Url.Action("HouseAssign", "HouseHolds", new { id = item.Id })" title="Assign" style="width: 26px ; height: 16px" class="btn btn-xs btn-info"><i class="fa  fa-user"></i></a>
+                                                    <a href="@Url.Action("Edit", "HouseHolds", new { id = item.Id })" title="Edit" style="width: 26px ; height: 16px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                                    <a href="@Url.Action("Details", "HouseHolds", new { id = item.Id })" title="Details" style="width: 26px ; height: 16px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                                                    <a href="@Url.Action("Delete", "HouseHolds", new { id = item.Id })" title="Delete" style="width: 26px ; height: 16px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
+                                                    @foreach (var budgets in item.Budgets)
+                                                    {
+                                                        <a href="@Url.Action("Create", "Items", new { id = budgets.Id })" title="Create Budget" style="width: 26px ; height: 16px" class="btn btn-xs btn-info"><i class="fa fa-bank"></i></a>
+                                                    }
+                                                    @foreach (var user in item.Users)
+                                                    {
+                                                        if (userId == user.Id)
+                                                        {
+                                                            @*@Html.ActionLink("Leave", "LeaveHouseHold", new { id = item.Id })*@
+                                                            <a href="@Url.Action("LeaveHouseHold", "HouseHolds", new { id = item.Id })" title="Leave" style="width: 26px ; height: 16px" class="btn btn-xs btn-danger"><i class="fa fa-circle"></i></a>
+
+                                                        }
+                                                    }
+                                                    <a href="@Url.Action("Create", "BankAccounts", new { id = item.Id })" title="Create New Account" style="width: 26px;height: 16px" class="btn btn-xs btn-success"><i class="fa fa-money"></i> </a>
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer small text-muted">
+                        </div>
+                    </div>
+
+
+                    @*</div>*@
+                </div>
+                @*<h4>Assigned Projects</h4>*@
+
+                @*</div>*@
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-3">
+                        <div class="card-header"style="background-color:#91d57f">
+                            <i class="fa fa-table"></i>
+                            Bank Account Details
+
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered dataTable2" width="100%" id="dataTable" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>HouseHold</th>
+
+                                            <th>Bank</th>
+                                            <th>Balance</th>
+                                            <th>Actions</th>
+                                            <th>Status</th>
 
 
 
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            @*<th>
-                @Html.DisplayNameFor(model => model.IsDeleted)
-            </th>*@
-            <th>Assigned Users</th>
-            <th>Actions</th>
-        </tr>
+                                        </tr>
+                                    </thead>
 
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                @*<td>
-                    @Html.DisplayFor(modelItem => item.IsDeleted)
-                </td>*@
-                <td>
-                    @foreach (var user in item.Users)
-                    {
-                        @user.FirstName
-                        <br />
-                    }
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+
+                                            foreach (var account in item.BankAccount)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => account.household.Name)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => account.Name)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => account.Balance)
+                                                        @*@account.Balance.ToString("C")*@
+                                                    </td>
+                                                    <td>
+                                                        @*<a href="/Transactions/Create/1" title="Add Transactions" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa fa-dollar"></i></a>*@
+                                                        <a href="@Url.Action("Create", "Transactions", new { id = account.Id })" title="Add Transaction" style="width: 26px ; height: 16px" class="btn btn-xs btn-success"><i class="fa  fa-dollar"></i></a>
+                                                        <a href="@Url.Action("Edit", "BankAccounts", new { id = account.Id })" title="Edit" style="width: 26px ; height: 16px" class="btn btn-xs btn-warning"><i class="fa  fa-edit"></i></a>
+                                                        <a href="@Url.Action("Details", "BankAccounts", new { id = account.Id })" title="Details" style="width: 26px ; height: 16px" class="btn btn-xs btn-info"><i class="fa  fa-eye"></i></a>
+                                                        <a href="@Url.Action("Delete", "BankAccounts", new { id = account.Id })" title="Delete" style="width: 26px ; height: 16px" class="btn btn-xs btn-danger"><i class="fa  fa-trash"></i></a>
 
 
-                </td>
-                <td>
-                    <a href="@Url.Action("Create", "Invites", new { id = item.Id })" title="Invite Users" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-envelope"></i></a>
-                    <a href="@Url.Action("HouseAssign", "HouseHolds", new { id = item.Id })" title="Assign" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-user"></i></a>
-                    <a href="@Url.Action("Edit", "HouseHolds", new { id = item.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a><br />
-                    <a href="@Url.Action("Details", "HouseHolds", new { id = item.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
-                    <a href="@Url.Action("Delete", "HouseHolds", new { id = item.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>
+                                                        @*<a href="/BankAccounts/Edit/1" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                                            <a href="/BankAccounts/Details/1" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                                                            <a href="/BankAccounts/Delete/1" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>*@
+                                                    </td>
+                                                    <td>
 
-                    @foreach (var user in item.Users)
-                    {
-                        if (userId == user.Id)
-                        {
-                            @*@Html.ActionLink("Leave", "LeaveHouseHold", new { id = item.Id })*@
-                            <a href="@Url.Action("LeaveHouseHold", "HouseHolds", new { id = item.Id })" title="Leave" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-circle"></i></a><br />
+                                                        @if (account.Balance <= 0)
+                                                        {
+                                                            <em style="color:red">Account OverDrawn</em>
+                                                        }
+                                                        else
+                                                        {
+                                                            <em style="color:green"> Enough Money</em>
+                                                        }
 
-                        }
-                    }
-                    <a href="@Url.Action("Create", "BankAccounts", new { id = item.Id })" title="Create New Account" style="width: 26px" class="btn btn-xs btn-success"><i class="fa fa-money"></i> </a><br />
 
-                </td>
-</tr>
+
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer small text-muted">
+                        </div>
+                    </div>
+
+
+                    @*</div>*@
+                </div>
+                @*<h4>Assigned Projects</h4>*@
+
+                @*</div>*@
+            </div>
+        </div>
+
+
+
         }
-  </table>
+        <script>
+            $(document).ready(function () {
+                $(".dataTable1").dataTable();
+            });
+            $(document).ready(function () {
+                $('.dataTable2').dataTable();
+            });
+            $(document).ready(function () {
+                $(".dataTable3").dataTable();
+            });
+            $(document).ready(function () {
+                $('.dataTable4').dataTable();
+            });
+        </script>
 
 
- <!--displaying bank accounts-->
-
-<h3> Bank Account details</h3>
-        <table class="table">
-            <tr>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.household.Name)*@
-                    House Hold Name
-                </th>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Name)*@
-                    Bank
-                </th>
-                <th>
-                    @*@Html.DisplayNameFor(model => model.Balance)*@
-                    Balance
-            </th>
-            <th>Actions</th>
-                <th> Account status</th>
-
-        </tr>
-
-        @foreach (var item in Model)
-        {
-            foreach (var account in item.BankAccount)
-            {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => account.household.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => account.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => account.Balance)
-                </td>
-                <td>
-                    @*<a href="/Transactions/Create/1" title="Add Transactions" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa fa-dollar"></i></a>*@
-                    <a href="@Url.Action("Create", "Transactions", new { id = account.Id })" title="Add Transaction" style="width: 26px ; height: 26px" class="btn btn-xs btn-success"><i class="fa  fa-dollar"></i></a>
-                    <a href="@Url.Action("Edit", "BankAccounts", new { id = account.Id })" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa  fa-edit"></i></a>
-                    <a href="@Url.Action("Details", "BankAccounts", new { id = account.Id })" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa  fa-eye"></i></a>
-                    <a href="@Url.Action("Delete", "BankAccounts", new { id = account.Id })" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa  fa-trash"></i></a>
-
-
-                    @*<a href="/BankAccounts/Edit/1" title="Edit" style="width: 26px ; height: 26px" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
-                    <a href="/BankAccounts/Details/1" title="Details" style="width: 26px ; height: 26px" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
-                    <a href="/BankAccounts/Delete/1" title="Delete" style="width: 26px ; height: 26px" class="btn btn-xs btn-danger"><i class="fa fa-trash-o"></i></a>*@
-                </td>
-                <td>
-
-                        @if (account.Balance <= 0)
-                        {
-                            <em style="color:red"> No Enough Money</em>
-                        }
-                        else
-                        {
-                            <em style ="color:green" > Enough Money</em >
-                            }
-
-
-
-
-                </td>
-            </tr>
-            }
-        }
-
-    </table>
-
-    }

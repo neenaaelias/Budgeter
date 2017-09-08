@@ -37,9 +37,9 @@ namespace Budgeter.Controllers
         }
 
         // GET: Items/Create
-        public ActionResult Create()
+        public ActionResult Create(int? id)
         {
-            ViewBag.BudgetId = new SelectList(db.Budgets, "Id", "Name");
+            ViewBag.BudgetId =id;
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name");
             return View();
         }
@@ -49,10 +49,18 @@ namespace Budgeter.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CategoryId,BudgetId,Amount,IsDeleted")] Item item)
+        public ActionResult Create([Bind(Include = "Id,CategoryId,BudgetId,Amount,IsDeleted")] Item item, int BId)
         {
             if (ModelState.IsValid)
             {
+                //....Added for budget
+                item.BudgetId = BId;
+                var budget = db.Budgets.Find(BId);
+                if (budget != null)
+                {
+                    item.Budget = budget;
+                    budget.Amount += item.Amount;
+                }
                 db.Items.Add(item);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -89,6 +97,7 @@ namespace Budgeter.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 db.Entry(item).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

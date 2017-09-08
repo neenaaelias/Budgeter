@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -12,6 +13,8 @@ namespace Budgeter.Models
         public string Payee { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Date { get; set; }
+        //[DisplayFormat(DataFormatString = "{C}", ApplyFormatInEditMode = false)]//added to display mode
+
         public double Balance { get; set; }
         public int TypeId { get; set; }
         public int CategoryId { get; set; }

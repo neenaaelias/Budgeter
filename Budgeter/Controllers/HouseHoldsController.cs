@@ -61,10 +61,21 @@ namespace Budgeter.Controllers
             {
                 household.CreatorId = User.Identity.GetUserId();
                 db.HouseHolds.Add(household);
+                // -------Added to work on budgets
+                Budget budget = new Budget
+                {
+                    HouseHoldId = household.Id,
+                    Household = db.HouseHolds.Find(household.Id),
+                    Name = household.Name + "Budget",
+                    Amount = 0
+
+                };
+                db.Budgets.Add(budget);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Home");
             }
-           // ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", household.CreatorId);
+            //------- Added to work on budgets
+            // ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", household.CreatorId);
             return View(household);
         }
         // GET: HouseHolds/Leave household/5
@@ -93,7 +104,7 @@ namespace Budgeter.Controllers
 
             helper.RemoveHouseFromUser(id, userId);
             db.SaveChanges();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: HouseHolds/Delete/5
@@ -104,7 +115,7 @@ namespace Budgeter.Controllers
             HouseHold houseHold = db.HouseHolds.Find(id);
             db.HouseHolds.Remove(houseHold);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Home");
         }
 
         protected override void Dispose(bool disposing)

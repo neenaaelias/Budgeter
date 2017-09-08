@@ -73,12 +73,12 @@ namespace Budgeter.Controllers
                     }
                         db.Transactions.Add(transaction);
                         db.SaveChanges();
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Index","Home");
                     }
 
             }
 
-            //ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "Name", transaction.BankAccountId);
             ViewBag.CategoryId = new SelectList(db.Categories, "Id", "Name", transaction.CategoryId);
             ViewBag.TypeId = new SelectList(db.Types, "Id", "Name", transaction.TypeId);
             return View(transaction);

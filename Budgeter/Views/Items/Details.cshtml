@@ -34,17 +34,50 @@
             @Html.DisplayFor(model => model.Amount)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.IsDeleted)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.IsDeleted)
-        </dd>
+        </dd>*@
 
     </dl>
 </div>
-<p>
+<a class="btn btn-danger" href="@Url.Action("Index", "Home")">Back to List</a>
+
+@*<p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
-</p>
+</p>*@
+<h2>Associated Transactions</h2>
+<table class="table">
+    <tr>
+        <th>Payee</th>
+        <th>Description</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Type</th>
+        <th>Category</th>
+        <th>EnteredBy</th>
+    </tr>
+    @foreach (var account in Model.Budget.Household.BankAccount)
+    {
+        foreach (var transaction in account.Transactions)
+        {
+            if (transaction.Category == Model.Category)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => transaction.Payee)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.Date)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.Balance)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.Type.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.Category.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => transaction.EnteredBy.FirstName)</td>
+                </tr>
+            }
+        }
+    }
+
+</table>
